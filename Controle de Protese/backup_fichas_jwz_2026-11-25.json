@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1795567557949,
+    "clinica": "Bom Sorriso",
+    "paciente": "Josefina de Lima",
+    "ficha": "02",
+    "dataEntrada": "2026-11-24",
+    "dataSaida": "2026-11-26",
+    "tipoTrabalho": "Pivo",
+    "proximaEtapa": "Coroa",
+    "doutor": "Dr lucoinaeia",
+    "repeticao": "NÃO"
+  },
+  {
+    "id": 1795560051100,
+    "clinica": "Sorriso Maroto",
+    "paciente": "Maria Auxiliadora",
+    "ficha": "01",
+    "dataEntrada": "2026-11-24",
+    "dataSaida": "2026-11-26",
+    "tipoTrabalho": "Coroa e Pião",
+    "proximaEtapa": "Polir",
+    "doutor": "Andre Mendonça",
+    "repeticao": "NÃO"
+  }
+]

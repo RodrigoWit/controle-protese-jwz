@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Controle de Próteses — J.W.Z</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 20px;
+      background: #f4f4f4;
+      color: #111;
+    }
+    .app-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .navegacao-abas {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .aba-btn {
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #d0d5dd;
+      color: #222;
+    }
+    .aba-btn.ativa {
+      background: #0f52ba;
+      color: #fff;
+    }
+    .vista {
+      display: none;
+    }
+    .vista.ativa {
+      display: block;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 820px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+    .painel {
+      background: #fff;
+      padding: 18px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 18px;
+    }
+    .cabecalho-tela {
+      text-align: center;
+      border-bottom: 2px solid #222;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+    .cabecalho-com-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      text-align: left;
+      flex-wrap: wrap;
+    }
+    .logo-lab {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #14534d;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      flex-shrink: 0;
+    }
+    .logo-lab-sm {
+      width: 56px;
+      height: 56px;
+    }
+    .cabecalho-tela .titulo-lab {
+      font-size: 15px;
+      font-weight: bold;
+      letter-spacing: 0.3px;
+    }
+    .cabecalho-tela .subtitulo-lab {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #333;
+      margin-top: 2px;
+    }
+    h2 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+    }
+    .titulo-centralizado {
+      text-align: center;
+    }
+    .aviso-edicao {
+      display: none;
+      background: #fff4d6;
+      border: 1px solid #e0b23c;
+      color: #5c4200;
+      padding: 8px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .aviso-edicao.ativo {
+      display: block;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .full {
+      grid-column: 1 / -1;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    input, select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 7px 8px;
+      font-size: 14px;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      background: #fff;
+    }
+    input[readonly] {
+      background: #eceff3;
+      color: #222;
+      font-weight: bold;
+      cursor: not-allowed;
+    }
+    .botoes {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    button.acao {
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background: #0f52ba;
+      color: #fff;
+    }
+    button.acao:hover {
+      opacity: 0.92;
+    }
+    button.secundario {
+      background: #666;
+    }
+    button.verde {
+      background: #1b7f4b;
+    }
+    button.laranja {
+      background: #c86400;
+    }
+    button.vermelho {
+      background: #b82525;
+    }
+    button.pequeno {
+      padding: 5px 8px;
+      font-size: 12px;
+    }
+
+    .barra-topo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .contador {
+      font-size: 12px;
+      color: #444;
+      font-weight: bold;
+    }
+    .lista-historico {
+      max-height: 540px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .item-hist {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      background: #fafafa;
+      font-size: 13px;
+    }
+    .item-topo {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .item-detalhe {
+      color: #333;
+      font-size: 12px;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .item-acoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* Estilos da Gestão */
+    .filtros {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .campo-filtro {
+      min-width: 190px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 720px) {
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+    .card {
+      background: #f9fafb;
+      border: 1px solid #e0e4e8;
+      border-radius: 6px;
+      padding: 14px;
+    }
+    .card-titulo {
+      font-size: 12px;
+      font-weight: bold;
+      color: #555;
+      text-transform: uppercase;
+    }
+    .card-valor {
+      font-size: 28px;
+      font-weight: bold;
+      color: #0f52ba;
+      margin-top: 6px;
+    }
+    .card-sub {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+    .grafico-box {
+      border: 1px solid #e2e2e2;
+      border-radius: 6px;
+      padding: 14px;
+      background: #fafafa;
+    }
+    .barra-linha {
+      display: grid;
+      grid-template-columns: 150px 1fr 54px;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+    .barra-linha:last-child {
+      margin-bottom: 0;
+    }
+    .barra-rotulo {
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .barra-trilha {
+      height: 22px;
+      background: #e6e9ef;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .barra-preenchimento {
+      height: 100%;
+      background: #0f52ba;
+      border-radius: 4px;
+      transition: width 0.25s ease;
+    }
+    .barra-preenchimento.verde {
+      background: #1b7f4b;
+    }
+    .barra-valor {
+      text-align: right;
+      font-weight: bold;
+      color: #222;
+    }
+    .vazio {
+      font-size: 13px;
+      color: #666;
+      padding: 8px 0;
+    }
+    .observacao {
+      font-size: 12px;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    #cupom {
+      display: none;
+    }
+
+    @media print {
+      @page {
+        size: 80mm auto;
+        margin: 2mm;
+      }
+      body {
+        margin: 0;
+        background: #fff;
+      }
+      .app-wrap {
+        display: none;
+      }
+      #cupom {
+        display: block;
+        width: 72mm;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 12px;
+        line-height: 1.35;
+        color: #000;
+      }
+      .logo-cupom {
+        display: block;
+        width: 46px;
+        height: 46px;
+        margin: 0 auto 4px auto;
+        border-radius: 50%;
+        object-fit: cover;
+        filter: grayscale(100%) contrast(140%);
+      }
+      .centro {
+        text-align: center;
+      }
+      .negrito {
+        font-weight: bold;
+      }
+      .linha {
+        border-top: 1px dashed #000;
+        margin: 6px 0;
+      }
+      .campo {
+        margin: 4px 0;
+        word-wrap: break-word;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-wrap">
+    <div class="navegacao-abas">
+      <button type="button" class="aba-btn ativa" id="abaFichas" onclick="window.jwzApp.trocarAba('fichas')">Fichas e Impressão</button>
+      <button type="button" class="aba-btn" id="abaGestao" onclick="window.jwzApp.trocarAba('gestao')">Gestão Simples</button>
+    </div>
+
+    <!-- VISTA 1: FICHAS -->
+    <div id="vistaFichas" class="vista ativa">
+      <div class="container">
+        <div class="painel">
+          <div class="cabecalho-tela cabecalho-com-logo">
+            <img
+              src="Logo JWZ.jpg"
+              alt="Logo JWZ Prótese Dentária"
+              class="logo-lab logo-lab-sm"
+              onerror="this.style.display='none';"
+            />
+            <div>
+              <div class="titulo-lab">LABORATÓRIO PROTÉTICO J.W.Z</div>
+              <div class="subtitulo-lab">T.P.D Responsável José Augusto</div>
+            </div>
+          </div>
+
+          <h2 class="titulo-centralizado">Controle de Próteses — Preenchimento</h2>
+
+          <div id="avisoEdicao" class="aviso-edicao">
+            Editando ficha Nº <span id="numeroEdicaoLabel"></span>
+          </div>
+
+          <div class="grid">
+            <div class="full">
+              <label for="clinica">Clínica</label>
+              <input id="clinica" type="text" placeholder="Nome da clínica" />
+            </div>
+            <div>
+              <label for="paciente">Paciente</label>
+              <input id="paciente" type="text" placeholder="Nome do paciente" />
+            </div>
+            <div>
+              <label for="ficha">Ficha (Automática)</label>
+              <input id="ficha" type="text" readonly tabindex="-1" value="01" />
+            </div>
+            <div>
+              <label for="dataEntrada">Data de Entrada</label>
+              <input id="dataEntrada" type="date" />
+            </div>
+            <div>
+              <label for="dataSaida">Data de Saída</label>
+              <input id="dataSaida" type="date" />
+            </div>
+            <div class="full">
+              <label for="tipoTrabalho">Tipo de Trabalho</label>
+              <input id="tipoTrabalho" type="text" placeholder="Ex.: Protocolo, PPR, Coroa, Conserto" />
+            </div>
+            <div class="full">
+              <label for="proximaEtapa">Próxima Etapa</label>
+              <input id="proximaEtapa" type="text" placeholder="Ex.: Prova de dentes, Acrilização" />
+            </div>
+            <div>
+              <label for="doutor">Dr(a)</label>
+              <input id="doutor" type="text" placeholder="Nome do(a) dentista" />
+            </div>
+            <div>
+              <label for="repeticao">Repetição?</label>
+              <select id="repeticao">
+                <option value="NÃO">NÃO</option>
+                <option value="SIM">SIM</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="botoes" id="botoesNovo">
+            <button id="btnImprimir" type="button" class="acao" onclick="window.jwzApp.imprimirFicha()">Imprimir</button>
+            <button id="btnLimpar" type="button" class="acao secundario" onclick="window.jwzApp.limparCampos()">Limpar Campos</button>
+          </div>
+
+          <div class="botoes" id="botoesEdicao" style="display: none;">
+            <button id="btnAtualizarImprimir" type="button" class="acao laranja" onclick="window.jwzApp.atualizarFicha(true)">Atualizar e Imprimir</button>
+            <button id="btnAtualizar" type="button" class="acao verde" onclick="window.jwzApp.atualizarFicha(false)">Salvar Alteração</button>
+            <button id="btnCancelarEdicao" type="button" class="acao secundario" onclick="window.jwzApp.cancelarEdicao()">Cancelar</button>
+          </div>
+        </div>
+
+        <div class="painel">
+          <div class="barra-topo">
+            <h2 style="margin: 0;">Fichas Salvas</h2>
+            <span class="contador" id="contadorFichas">0 de 0 ficha(s)</span>
+          </div>
+
+          <div style="margin-bottom: 10px;">
+            <input id="busca" type="text" placeholder="Buscar por paciente, clínica, ficha ou Dr(a)..." oninput="window.jwzApp.renderizarHistorico()" />
+          </div>
+
+          <div class="botoes" style="margin-top: 0; margin-bottom: 12px;">
+            <button id="btnExportar" type="button" class="acao verde pequeno" onclick="window.jwzApp.exportarBackup()">Baixar Backup</button>
+            <button id="btnImportar" type="button" class="acao secundario pequeno" onclick="window.jwzApp.abrirImportarBackup()">Restaurar Backup</button>
+            <input id="arquivoBackup" type="file" accept=".json,application/json" style="display: none;" onchange="window.jwzApp.importarBackup(event)" />
+          </div>
+
+          <div class="lista-historico" id="listaHistorico"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VISTA 2: GESTÃO / RESULTADOS -->
+    <div id="vistaGestao" class="vista">
+      <div class="painel">
+        <div class="cabecalho-tela cabecalho-com-logo">
+          <img
+            src="Logo JWZ.jpg"
+            alt="Logo JWZ Prótese Dentária"
+            class="logo-lab"
+            onerror="this.style.display='none';"
+          />
+          <div>
+            <div class="titulo-lab">LABORATÓRIO PROTÉTICO J.W.Z — GESTÃO SIMPLES</div>
+            <div class="subtitulo-lab">T.P.D Responsável José Augusto</div>
+          </div>
+        </div>
+
+        <div class="filtros">
+          <div class="campo-filtro">
+            <label for="filtroMes">Escolher Mês</label>
+            <input id="filtroMes" type="month" onchange="window.jwzApp.onMesChange()" />
+          </div>
+          <div class="campo-filtro">
+            <label for="baseClientes">Contar Clientes por</label>
+            <select id="baseClientes" onchange="window.jwzApp.atualizarPainelGestao()">
+              <option value="clinica">Clínica (únicas)</option>
+              <option value="paciente">Paciente (únicos)</option>
+            </select>
+          </div>
+          <div class="botoes" style="margin-top: 0;">
+            <button type="button" class="acao verde" id="btnAtualizarPainel" onclick="window.jwzApp.atualizarPainelGestao()">Atualizar</button>
+            <button type="button" class="acao secundario" id="btnTodosMeses" onclick="window.jwzApp.verTodosMeses()">Ver Todos os Meses</button>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-titulo">Quantidade de Serviços</div>
+            <div class="card-valor" id="totalServicos">0</div>
+            <div class="card-sub" id="legendaServicos">No período selecionado</div>
+          </div>
+          <div class="card">
+            <div class="card-titulo">Quantidade de Clientes</div>
+            <div class="card-valor" id="totalClientes" style="color: #1b7f4b;">0</div>
+            <div class="card-sub" id="legendaClientes">Clínicas distintas</div>
+          </div>
+          <div class="card">
+            <div class="card-titulo">Repetições</div>
+            <div class="card-valor" id="totalRepeticoes" style="color: #c86400;">0</div>
+            <div class="card-sub">Fichas marcadas como SIM</div>
+          </div>
+        </div>
+
+        <div class="observacao">
+          * A data considerada para o mês é a <strong>Data de Entrada</strong> da ficha (se estiver em branco, usa a data de saída).
+        </div>
+      </div>
+
+      <div class="painel">
+        <h2>Gráfico de Barras — Serviços por Mês</h2>
+        <div class="grafico-box" id="graficoMensal"></div>
+      </div>
+
+      <div class="painel">
+        <h2 id="tituloGraficoDetalhes">Gráfico de Barras — Serviços por Tipo de Trabalho</h2>
+        <div class="grafico-box" id="graficoTipos"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cupom">
+    <img
+      src="Logo JWZ.jpg"
+      alt="Logo JWZ"
+      class="logo-cupom"
+      onerror="this.style.display='none';"
+    />
+    <div class="centro negrito">LABORATÓRIO PROTÉTICO J.W.Z</div>
+    <div class="centro">T.P.D Responsável José Augusto</div>
+    <div class="linha"></div>
+    <div class="centro negrito">CONTROLE DE PRÓTESES</div>
+    <div class="linha"></div>
+    <div class="campo"><span class="negrito">CLÍNICA:</span> <span id="p_clinica"></span></div>
+    <div class="campo"><span class="negrito">PACIENTE:</span> <span id="p_paciente"></span></div>
+    <div class="campo"><span class="negrito">FICHA:</span> <span id="p_ficha"></span></div>
+    <div class="campo"><span class="negrito">DATA DE ENTRADA:</span> <span id="p_entrada"></span></div>
+    <div class="linha"></div>
+    <div class="campo"><span class="negrito">TIPO DE TRABALHO:</span> <span id="p_tipo_trabalho"></span></div>
+    <div class="campo"><span class="negrito">PRÓXIMA ETAPA:</span> <span id="p_etapa"></span></div>
+    <div class="campo"><span class="negrito">DR(A):</span> <span id="p_doutor"></span></div>
+    <div class="campo"><span class="negrito">DATA DE SAÍDA:</span> <span id="p_saida"></span></div>
+    <div class="linha"></div>
+    <div class="campo negrito" id="p_repeticao"></div>
+  </div>
+
+  <script>
+    (function () {
+      var CHAVE_DB = "jwz_controle_protese_v1";
+      var memoriaTemporaria = [];
+      var idEmEdicao = null;
+      var mostrarTodosMeses = false;
+
+      function hojeISO() {
+        var agora = new Date();
+        var ano = agora.getFullYear();
+        var mes = String(agora.getMonth() + 1).padStart(2, "0");
+        var dia = String(agora.getDate()).padStart(2, "0");
+        return ano + "-" + mes + "-" + dia;
+      }
+
+      function mesAtualISO() {
+        return hojeISO().slice(0, 7);
+      }
+
+      function formatarData(iso) {
+        if (!iso) return "";
+        var partes = String(iso).split("-");
+        if (partes.length !== 3) return iso;
+        return partes[2] + "/" + partes[1] + "/" + partes[0];
+      }
+
+      function obterRegistros() {
+        try {
+          var bruto = window.localStorage.getItem(CHAVE_DB);
+          if (bruto) {
+            var parsed = JSON.parse(bruto);
+            if (Array.isArray(parsed)) {
+              memoriaTemporaria = parsed;
+              return parsed.slice();
+            }
+          }
+        } catch (e) {}
+        return memoriaTemporaria.slice();
+      }
+
+      function salvarRegistros(lista) {
+        memoriaTemporaria = lista.slice();
+        try {
+          window.localStorage.setItem(CHAVE_DB, JSON.stringify(lista));
+        } catch (e) {}
+      }
+
+      function gerarProximaFicha() {
+        var lista = obterRegistros();
+        var maiorNumero = 0;
+
+        for (var i = 0; i < lista.length; i++) {
+          var digitos = String(lista[i].ficha || "").replace(/\D/g, "");
+          var num = parseInt(digitos, 10);
+          if (!isNaN(num) && num > maiorNumero) {
+            maiorNumero = num;
+          }
+        }
+
+        return String(maiorNumero + 1).padStart(2, "0");
+      }
+
+      function atualizarNumeroFichaAutomatico() {
+        if (idEmEdicao === null) {
+          document.getElementById("ficha").value = gerarProximaFicha();
+        }
+      }
+
+      function alternarModoEdicao(emEdicao, numeroFicha) {
+        var aviso = document.getElementById("avisoEdicao");
+        var labelNum = document.getElementById("numeroEdicaoLabel");
+        var botoesNovo = document.getElementById("botoesNovo");
+        var botoesEdicao = document.getElementById("botoesEdicao");
+
+        if (emEdicao) {
+          labelNum.textContent = numeroFicha || "-";
+          aviso.className = "aviso-edicao ativo";
+          botoesNovo.style.display = "none";
+          botoesEdicao.style.display = "flex";
+        } else {
+          idEmEdicao = null;
+          labelNum.textContent = "";
+          aviso.className = "aviso-edicao";
+          botoesNovo.style.display = "flex";
+          botoesEdicao.style.display = "none";
+        }
+      }
+
+      function lerFormulario(idExistente, fichaFixa) {
+        return {
+          id: idExistente != null ? idExistente : Date.now() + Math.floor(Math.random() * 1000),
+          clinica: document.getElementById("clinica").value.trim(),
+          paciente: document.getElementById("paciente").value.trim(),
+          ficha: fichaFixa != null ? fichaFixa : (document.getElementById("ficha").value.trim() || gerarProximaFicha()),
+          dataEntrada: document.getElementById("dataEntrada").value,
+          dataSaida: document.getElementById("dataSaida").value,
+          tipoTrabalho: document.getElementById("tipoTrabalho").value.trim(),
+          proximaEtapa: document.getElementById("proximaEtapa").value.trim(),
+          doutor: document.getElementById("doutor").value.trim(),
+          repeticao: document.getElementById("repeticao").value
+        };
+      }
+
+      function aplicarCupom(dados) {
+        document.getElementById("p_clinica").textContent = dados.clinica || "";
+        document.getElementById("p_paciente").textContent = dados.paciente || "";
+        document.getElementById("p_ficha").textContent = dados.ficha || "";
+        document.getElementById("p_entrada").textContent = formatarData(dados.dataEntrada);
+        document.getElementById("p_tipo_trabalho").textContent = dados.tipoTrabalho || "";
+        document.getElementById("p_etapa").textContent = dados.proximaEtapa || "";
+        document.getElementById("p_doutor").textContent = dados.doutor || "";
+        document.getElementById("p_saida").textContent = formatarData(dados.dataSaida);
+        document.getElementById("p_repeticao").textContent =
+          dados.repeticao === "SIM" ? "REPETIÇÃO?  SIM ( X )   NÃO (   )" : "REPETIÇÃO?  SIM (   )   NÃO ( X )";
+      }
+
+      function dispararImpressao(dados) {
+        aplicarCupom(dados);
+        try {
+          window.print();
+        } catch (err) {
+          alert("Ficha Nº " + dados.ficha + " salva.");
+        }
+      }
+
+      function renderizarHistorico() {
+        var buscaEl = document.getElementById("busca");
+        var termo = buscaEl ? buscaEl.value.trim().toLowerCase() : "";
+        var todos = obterRegistros();
+        var filtrados = todos.filter(function (item) {
+          if (!termo) return true;
+          var campos = [
+            item.paciente,
+            item.clinica,
+            item.ficha,
+            item.doutor,
+            item.tipoTrabalho,
+            item.proximaEtapa
+          ];
+          return campos.some(function (v) {
+            return String(v || "").toLowerCase().indexOf(termo) !== -1;
+          });
+        });
+
+        document.getElementById("contadorFichas").textContent =
+          filtrados.length + " de " + todos.length + " ficha(s)";
+
+        var container = document.getElementById("listaHistorico");
+        container.innerHTML = "";
+
+        if (filtrados.length === 0) {
+          container.innerHTML = '<div style="font-size:13px;color:#666;">Nenhuma ficha encontrada.</div>';
+          return;
+        }
+
+        filtrados.forEach(function (item) {
+          var entradaFmt = formatarData(item.dataEntrada) || "-";
+          var saidaFmt = formatarData(item.dataSaida) || "-";
+          var div = document.createElement("div");
+          div.className = "item-hist";
+
+          var topo = document.createElement("div");
+          topo.className = "item-topo";
+          topo.innerHTML =
+            "<span>Ficha: " + (item.ficha || "-") + " — " + (item.paciente || "Sem paciente") + "</span>" +
+            "<span>Entrada: " + entradaFmt + "</span>";
+
+          var detalhe = document.createElement("div");
+          detalhe.className = "item-detalhe";
+          detalhe.innerHTML =
+            "<strong>Clínica:</strong> " + (item.clinica || "-") + " | <strong>Trabalho:</strong> " + (item.tipoTrabalho || "-") + "<br/>" +
+            "<strong>Etapa:</strong> " + (item.proximaEtapa || "-") + " | <strong>Saída:</strong> " + saidaFmt + " | <strong>Rep.:</strong> " + (item.repeticao || "NÃO");
+
+          var acoes = document.createElement("div");
+          acoes.className = "item-acoes";
+
+          var btnReimp = document.createElement("button");
+          btnReimp.type = "button";
+          btnReimp.className = "acao pequeno";
+          btnReimp.textContent = "Reimprimir";
+          btnReimp.onclick = function () { reimprimirItem(item.id); };
+
+          var btnCarregar = document.createElement("button");
+          btnCarregar.type = "button";
+          btnCarregar.className = "acao secundario pequeno";
+          btnCarregar.textContent = "Carregar / Atualizar";
+          btnCarregar.onclick = function () { carregarParaEditar(item.id); };
+
+          var btnExcluir = document.createElement("button");
+          btnExcluir.type = "button";
+          btnExcluir.className = "acao vermelho pequeno";
+          btnExcluir.textContent = "Excluir";
+          btnExcluir.onclick = function () { excluirItem(item.id); };
+
+          acoes.appendChild(btnReimp);
+          acoes.appendChild(btnCarregar);
+          acoes.appendChild(btnExcluir);
+
+          div.appendChild(topo);
+          div.appendChild(detalhe);
+          div.appendChild(acoes);
+          container.appendChild(div);
+        });
+      }
+
+      function imprimirFicha() {
+        var numeroGerado = gerarProximaFicha();
+        var registro = lerFormulario(null, numeroGerado);
+        var lista = obterRegistros();
+        lista.unshift(registro);
+        salvarRegistros(lista);
+        renderizarHistorico();
+        limparCampos();
+        dispararImpressao(registro);
+      }
+
+      function atualizarFicha(imprimirAposSalvar) {
+        if (idEmEdicao === null) return;
+
+        var lista = obterRegistros();
+        var indice = -1;
+        for (var i = 0; i < lista.length; i++) {
+          if (lista[i].id === idEmEdicao) {
+            indice = i;
+            break;
+          }
+        }
+
+        if (indice === -1) {
+          alert("Ficha não encontrada para atualização.");
+          cancelarEdicao();
+          return;
+        }
+
+        var fichaOriginal = lista[indice].ficha;
+        var registroAtualizado = lerFormulario(idEmEdicao, fichaOriginal);
+        lista[indice] = registroAtualizado;
+
+        salvarRegistros(lista);
+        renderizarHistorico();
+        cancelarEdicao();
+
+        if (imprimirAposSalvar) {
+          dispararImpressao(registroAtualizado);
+        } else {
+          alert("Ficha Nº " + fichaOriginal + " atualizada com sucesso.");
+        }
+      }
+
+      function cancelarEdicao() {
+        idEmEdicao = null;
+        alternarModoEdicao(false);
+        limparCampos();
+      }
+
+      function limparCampos() {
+        idEmEdicao = null;
+        alternarModoEdicao(false);
+        ["clinica", "paciente", "dataEntrada", "dataSaida", "tipoTrabalho", "proximaEtapa", "doutor"].forEach(function (id) {
+          document.getElementById(id).value = "";
+        });
+        document.getElementById("repeticao").value = "NÃO";
+        document.getElementById("dataEntrada").value = hojeISO();
+        atualizarNumeroFichaAutomatico();
+      }
+
+      function reimprimirItem(id) {
+        var lista = obterRegistros();
+        var item = lista.find(function (r) { return r.id === id; });
+        if (!item) return;
+        dispararImpressao(item);
+      }
+
+      function carregarParaEditar(id) {
+        var lista = obterRegistros();
+        var item = lista.find(function (r) { return r.id === id; });
+        if (!item) return;
+
+        idEmEdicao = item.id;
+        document.getElementById("clinica").value = item.clinica || "";
+        document.getElementById("paciente").value = item.paciente || "";
+        document.getElementById("ficha").value = item.ficha || "";
+        document.getElementById("dataEntrada").value = item.dataEntrada || "";
+        document.getElementById("dataSaida").value = item.dataSaida || "";
+        document.getElementById("tipoTrabalho").value = item.tipoTrabalho || "";
+        document.getElementById("proximaEtapa").value = item.proximaEtapa || "";
+        document.getElementById("doutor").value = item.doutor || "";
+        document.getElementById("repeticao").value = item.repeticao || "NÃO";
+
+        alternarModoEdicao(true, item.ficha);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function excluirItem(id) {
+        var lista = obterRegistros();
+        var item = lista.find(function (r) { return r.id === id; });
+        if (!item) return;
+
+        var confirmar = window.confirm(
+          "Deseja realmente excluir a Ficha " + (item.ficha || "-") + " (" + (item.paciente || "Sem paciente") + ")?"
+        );
+        if (!confirmar) return;
+
+        var novaLista = lista.filter(function (r) { return r.id !== id; });
+        salvarRegistros(novaLista);
+
+        if (idEmEdicao === id) {
+          cancelarEdicao();
+        } else {
+          atualizarNumeroFichaAutomatico();
+        }
+
+        renderizarHistorico();
+      }
+
+      function exportarBackup() {
+        var dados = JSON.stringify(obterRegistros(), null, 2);
+        var blob = new Blob([dados], { type: "application/json" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "backup_fichas_jwz_" + hojeISO() + ".json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function abrirImportarBackup() {
+        var inputArq = document.getElementById("arquivoBackup");
+        if (!inputArq) return;
+        inputArq.value = "";
+        inputArq.click();
+      }
+
+      function importarBackup(e) {
+        var file = e && e.target && e.target.files ? e.target.files[0] : null;
+        if (!file) return;
+
+        var reader = new FileReader();
+        reader.onload = function () {
+          try {
+            var importados = JSON.parse(reader.result);
+            if (!Array.isArray(importados)) {
+              alert("Arquivo de backup inválido (esperado uma lista de fichas).");
+              return;
+            }
+            salvarRegistros(importados);
+            cancelarEdicao();
+            renderizarHistorico();
+            atualizarPainelGestao();
+            alert("Backup restaurado com sucesso (" + importados.length + " ficha(s)).");
+          } catch (err) {
+            alert("Não foi possível ler o arquivo de backup.");
+          }
+        };
+        reader.onerror = function () {
+          alert("Erro ao abrir o arquivo selecionado.");
+        };
+        reader.readAsText(file, "utf-8");
+      }
+
+      function obterMesItem(item) {
+        var dataRef = item.dataEntrada || item.dataSaida || "";
+        if (dataRef.length >= 7) {
+          return dataRef.slice(0, 7);
+        }
+        return "";
+      }
+
+      function formatarMesLegivel(aaaaMm) {
+        if (!aaaaMm || aaaaMm.indexOf("-") === -1) return "Sem data";
+        var partes = aaaaMm.split("-");
+        var meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+        var idx = parseInt(partes[1], 10) - 1;
+        return (meses[idx] || partes[1]) + "/" + partes[0];
+      }
+
+      function renderizarBarras(containerId, itens, classeBarra) {
+        var container = document.getElementById(containerId);
+        container.innerHTML = "";
+
+        if (!itens || itens.length === 0) {
+          container.innerHTML = '<div class="vazio">Sem dados para exibir neste gráfico.</div>';
+          return;
+        }
+
+        var maior = 1;
+        for (var i = 0; i < itens.length; i++) {
+          if (itens[i].valor > maior) maior = itens[i].valor;
+        }
+
+        for (var j = 0; j < itens.length; j++) {
+          var item = itens[j];
+          var pct = Math.max(4, Math.round((item.valor / maior) * 100));
+
+          var linha = document.createElement("div");
+          linha.className = "barra-linha";
+
+          var rotulo = document.createElement("div");
+          rotulo.className = "barra-rotulo";
+          rotulo.title = item.rotulo;
+          rotulo.textContent = item.rotulo;
+
+          var trilha = document.createElement("div");
+          trilha.className = "barra-trilha";
+
+          var preenchimento = document.createElement("div");
+          preenchimento.className = "barra-preenchimento" + (classeBarra ? " " + classeBarra : "");
+          preenchimento.style.width = pct + "%";
+
+          var valor = document.createElement("div");
+          valor.className = "barra-valor";
+          valor.textContent = item.valor;
+
+          trilha.appendChild(preenchimento);
+          linha.appendChild(rotulo);
+          linha.appendChild(trilha);
+          linha.appendChild(valor);
+          container.appendChild(linha);
+        }
+      }
+
+      function atualizarPainelGestao() {
+        var todos = obterRegistros();
+        var mesSelecionado = document.getElementById("filtroMes").value;
+        var baseClientes = document.getElementById("baseClientes").value;
+
+        var filtrados = todos.filter(function (item) {
+          if (mostrarTodosMeses || !mesSelecionado) return true;
+          return obterMesItem(item) === mesSelecionado;
+        });
+
+        var clientesUnicos = {};
+        var repeticoes = 0;
+        var contagemTipos = {};
+
+        for (var i = 0; i < filtrados.length; i++) {
+          var reg = filtrados[i];
+          var chaveCliente = baseClientes === "paciente"
+            ? (reg.paciente || "").trim().toLowerCase()
+            : (reg.clinica || "").trim().toLowerCase();
+
+          if (chaveCliente) clientesUnicos[chaveCliente] = true;
+          if (reg.repeticao === "SIM") repeticoes++;
+
+          var tipo = (reg.tipoTrabalho || "Não informado").trim();
+          contagemTipos[tipo] = (contagemTipos[tipo] || 0) + 1;
+        }
+
+        document.getElementById("totalServicos").textContent = filtrados.length;
+        document.getElementById("totalClientes").textContent = Object.keys(clientesUnicos).length;
+        document.getElementById("totalRepeticoes").textContent = repeticoes;
+
+        document.getElementById("legendaServicos").textContent = mostrarTodosMeses
+          ? "Em todos os meses"
+          : "Mês: " + formatarMesLegivel(mesSelecionado);
+
+        document.getElementById("legendaClientes").textContent = baseClientes === "paciente"
+          ? "Pacientes distintos"
+          : "Clínicas distintas";
+
+        var contagemMeses = {};
+        for (var j = 0; j < todos.length; j++) {
+          var m = obterMesItem(todos[j]) || "sem-data";
+          contagemMeses[m] = (contagemMeses[m] || 0) + 1;
+        }
+
+        var mesesOrdenados = Object.keys(contagemMeses).sort().map(function (chave) {
+          return { rotulo: formatarMesLegivel(chave), valor: contagemMeses[chave] };
+        });
+        renderizarBarras("graficoMensal", mesesOrdenados, "");
+
+        var tiposOrdenados = Object.keys(contagemTipos)
+          .map(function (tipo) {
+            return { rotulo: tipo, valor: contagemTipos[tipo] };
+          })
+          .sort(function (a, b) { return b.valor - a.valor; });
+
+        document.getElementById("tituloGraficoDetalhes").textContent = mostrarTodosMeses
+          ? "Gráfico de Barras — Serviços por Tipo de Trabalho (Todos os Meses)"
+          : "Gráfico de Barras — Serviços por Tipo de Trabalho (" + formatarMesLegivel(mesSelecionado) + ")";
+
+        renderizarBarras("graficoTipos", tiposOrdenados, "verde");
+      }
+
+      function trocarAba(alvo) {
+        var isGestao = alvo === "gestao";
+        document.getElementById("abaFichas").className = "aba-btn" + (!isGestao ? " ativa" : "");
+        document.getElementById("abaGestao").className = "aba-btn" + (isGestao ? " ativa" : "");
+        document.getElementById("vistaFichas").className = "vista" + (!isGestao ? " ativa" : "");
+        document.getElementById("vistaGestao").className = "vista" + (isGestao ? " ativa" : "");
+        if (isGestao) {
+          atualizarPainelGestao();
+        }
+      }
+
+      function onMesChange() {
+        mostrarTodosMeses = false;
+        atualizarPainelGestao();
+      }
+
+      function verTodosMeses() {
+        mostrarTodosMeses = true;
+        atualizarPainelGestao();
+      }
+
+      window.jwzApp = {
+        trocarAba: trocarAba,
+        imprimirFicha: imprimirFicha,
+        limparCampos: limparCampos,
+        atualizarFicha: atualizarFicha,
+        cancelarEdicao: cancelarEdicao,
+        renderizarHistorico: renderizarHistorico,
+        exportarBackup: exportarBackup,
+        abrirImportarBackup: abrirImportarBackup,
+        importarBackup: importarBackup,
+        atualizarPainelGestao: atualizarPainelGestao,
+        onMesChange: onMesChange,
+        verTodosMeses: verTodosMeses
+      };
+
+      document.getElementById("filtroMes").value = mesAtualISO();
+      if (!document.getElementById("dataEntrada").value) {
+        document.getElementById("dataEntrada").value = hojeISO();
+      }
+      atualizarNumeroFichaAutomatico();
+      renderizarHistorico();
+      atualizarPainelGestao();
+    })();
+  </script>
+</body>
+</html>
